@@ -1,6 +1,13 @@
 local window = {}
 local cookie = {}
 local bgImage
+local pointsFont
+local top_ui_box = {}
+local points_text = {}
+local totalClicks = 0
+local mult = 1
+local bottom_ui_box = {}
+local mult_text = {}
 
 function love.load()
     -- window width and height
@@ -35,6 +42,29 @@ function love.load()
 
     -- background image
     bgImage = love.graphics.newImage("images/background.jpg")
+
+    -- fonts
+    pointsFont = love.graphics.newFont("fonts/mightysouly.ttf", 80)
+
+    -- top ui box
+    top_ui_box.x = 0
+    top_ui_box.y = 50
+    top_ui_box.width = window.width
+    top_ui_box.height = 100
+
+    -- points text
+    points_text.x = window.width / 2
+    points_text.y = (top_ui_box.y + top_ui_box.height / 2)
+
+    -- bottom ui box
+    bottom_ui_box.x = 0
+    bottom_ui_box.y = window.height - 150
+    bottom_ui_box.width = window.width
+    bottom_ui_box.height = 150
+
+    -- mult text
+    mult_text.x = window.width / 2
+    mult_text.y = (bottom_ui_box.y + bottom_ui_box.height / 2)
 end
 
 function love.update(dt)
@@ -54,10 +84,39 @@ function love.update(dt)
 end
 
 function love.draw()
-    -- x, y, rotation radians, scalex, scaley, originxoffset, originyoffset
+    -- x, y, rotation in radians, scalex, scaley, originxoffset, originyoffset
+    -- bg image
     love.graphics.draw(
-        bgImage, 0, 0, 0
+        bgImage, window.width / 2, window.height / 2, 0, 0.5, 0.5, bgImage:getWidth() / 2, bgImage:getHeight() / 2
     )
+    -- top ui box
+    love.graphics.setFont(pointsFont)
+    love.graphics.setColor(9 / 255, 36 / 255, 118 / 255, 0.8)
+    love.graphics.rectangle("fill", top_ui_box.x, top_ui_box.y, top_ui_box.width, top_ui_box.height)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print(
+        totalClicks * mult,
+        points_text.x,
+        points_text.y,
+        0, 1, 1,
+        pointsFont:getWidth(totalClicks * mult) / 2,
+        pointsFont:getHeight(totalClicks * mult) / 2
+    )
+    -- bottom ui box
+    love.graphics.setColor(9 / 255, 36 / 255, 118 / 255, 0.8)
+    love.graphics.rectangle("fill", bottom_ui_box.x, bottom_ui_box.y, bottom_ui_box.width, bottom_ui_box.height)
+    love.graphics.setColor(1, 1, 1, 1)
+    local full_text = totalClicks .. " x " .. mult
+    love.graphics.print(
+        full_text,
+        mult_text.x,
+        mult_text.y,
+        0, 1, 1,
+        pointsFont:getWidth(full_text) / 2,
+        pointsFont:getHeight(full_text) / 2
+    )
+    -- cookie
+    love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(
         cookie.sprite,
         cookie.x,
@@ -76,7 +135,7 @@ function CheckCookieHovered()
 
     if mouse_x > cookie.left and mouse_x < cookie.right
         and mouse_y > cookie.top and mouse_y < cookie.bottom then
-        print("cookie hovered")
+        -- print("cookie hovered")
         cookie.hovered = true
     else
         cookie.hovered = false
@@ -89,6 +148,8 @@ function love.mousepressed(mouse_x, mouse_y, button)
         if mouse_x > cookie.left and mouse_x < cookie.right
             and mouse_y > cookie.top and mouse_y < cookie.bottom then
             print("cookie clicked")
+            totalClicks = totalClicks + 1
+            print(totalClicks)
             cookie.pressed = true
         end
     end
