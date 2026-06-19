@@ -1,13 +1,46 @@
 local window = {}
 local cookie = {}
-local bgImage
-local pointsFont
+local bg_image
+local points_font
 local top_ui_box = {}
 local points_text = {}
-local totalClicks = 0
+local total_clicks = 0
 local mult = 1
 local bottom_ui_box = {}
 local mult_text = {}
+local shop = {}
+local shop_displayed = false
+local cards = {
+    {
+        mult = math.random(20),
+        x = 0,
+        y = 0,
+        width = 9 * 15,
+        height = 16 * 15,
+    },
+    {
+        mult = math.random(20),
+        x = 0,
+        y = 0,
+        width = 9 * 15,
+        height = 16 * 15,
+    },
+    {
+        mult = math.random(20),
+        x = 0,
+        y = 0,
+        width = 9 * 15,
+        height = 16 * 15,
+    },
+    {
+        mult = math.random(20),
+        x = 0,
+        y = 0,
+        width = 9 * 15,
+        height = 16 * 15,
+    },
+
+}
 
 function love.load()
     -- window width and height
@@ -41,10 +74,10 @@ function love.load()
     cookie.cursor_pointer = love.mouse.getSystemCursor("hand")
 
     -- background image
-    bgImage = love.graphics.newImage("images/background.jpg")
+    bg_image = love.graphics.newImage("images/background.jpg")
 
     -- fonts
-    pointsFont = love.graphics.newFont("fonts/mightysouly.ttf", 80)
+    points_font = love.graphics.newFont("fonts/mightysouly.ttf", 80)
 
     -- top ui box
     top_ui_box.x = 0
@@ -65,12 +98,22 @@ function love.load()
     -- mult text
     mult_text.x = window.width / 2
     mult_text.y = (bottom_ui_box.y + bottom_ui_box.height / 2)
+
+    -- shop
+    shop.x = 0
+    shop.y = window.height
+    shop.width = window.width
+    shop.height = 0.7 * window.height
+
+    -- cards
 end
 
 function love.update(dt)
-    CheckCookieHovered()
+    if not shop_displayed then
+        CheckCookieHovered()
+    end
     -- hovering and clicking to scale logic
-    if cookie.hovered then
+    if not shop_displayed and cookie.hovered then
         love.mouse.setCursor(cookie.cursor_pointer)
 
         cookie.scale_x = Lerp(cookie.scale_x, cookie.hover_scale, cookie.hover_scale_speed * dt)
@@ -81,39 +124,41 @@ function love.update(dt)
         cookie.scale_x = Lerp(cookie.scale_x, cookie.base_scale, cookie.hover_scale_speed * dt)
         cookie.scale_y = Lerp(cookie.scale_y, cookie.base_scale, cookie.hover_scale_speed * dt)
     end
+    -- check points for shop every frame
+    CheckCurrentPoints(dt)
 end
 
 function love.draw()
     -- x, y, rotation in radians, scalex, scaley, originxoffset, originyoffset
     -- bg image
     love.graphics.draw(
-        bgImage, window.width / 2, window.height / 2, 0, 0.5, 0.5, bgImage:getWidth() / 2, bgImage:getHeight() / 2
+        bg_image, window.width / 2, window.height / 2, 0, 0.5, 0.5, bg_image:getWidth() / 2, bg_image:getHeight() / 2
     )
     -- top ui box
-    love.graphics.setFont(pointsFont)
-    love.graphics.setColor(9 / 255, 36 / 255, 118 / 255, 0.8)
+    love.graphics.setFont(points_font)
+    love.graphics.setColor(9 / 255, 36 / 255, 118 / 255, 0)
     love.graphics.rectangle("fill", top_ui_box.x, top_ui_box.y, top_ui_box.width, top_ui_box.height)
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.print(
-        totalClicks * mult,
+        total_clicks * mult,
         points_text.x,
         points_text.y,
         0, 1, 1,
-        pointsFont:getWidth(totalClicks * mult) / 2,
-        pointsFont:getHeight(totalClicks * mult) / 2
+        points_font:getWidth(total_clicks * mult) / 2,
+        points_font:getHeight(total_clicks * mult) / 2
     )
     -- bottom ui box
     love.graphics.setColor(9 / 255, 36 / 255, 118 / 255, 0.8)
     love.graphics.rectangle("fill", bottom_ui_box.x, bottom_ui_box.y, bottom_ui_box.width, bottom_ui_box.height)
     love.graphics.setColor(1, 1, 1, 1)
-    local full_text = totalClicks .. " x " .. mult
+    local full_text = total_clicks .. " x " .. mult
     love.graphics.print(
         full_text,
         mult_text.x,
         mult_text.y,
         0, 1, 1,
-        pointsFont:getWidth(full_text) / 2,
-        pointsFont:getHeight(full_text) / 2
+        points_font:getWidth(full_text) / 2,
+        points_font:getHeight(full_text) / 2
     )
     -- cookie
     love.graphics.setColor(1, 1, 1, 1)
@@ -127,6 +172,42 @@ function love.draw()
         cookie.sprite:getWidth() / 2,
         cookie.sprite:getHeight() / 2
     )
+    -- shop
+    love.graphics.setColor(9 / 255, 36 / 255, 118 / 255)
+    love.graphics.rectangle(
+        "fill",
+        shop.x,
+        shop.y,
+        shop.width,
+        shop.height
+    )
+    love.graphics.setColor(1, 1, 1, 1)
+    -- add cards to shop
+    for i, random_mult in ipairs(random_mults) do
+        love.graphics.rectangle(
+            "fill",
+            shop.x * 0.2 * i,
+            shop.y,
+            card.width,
+            card.height
+        )
+    end
+end
+
+function PositionCards()
+    cards[1].x = shop.height
+end
+
+function CheckCurrentPoints(dt)
+    local points = total_clicks * mult
+    if points > 0 and points % 10 == 0 then
+        DisplayShop(dt)
+        shop_displayed = true
+    end
+end
+
+function DisplayShop(dt)
+    shop.y = Lerp(shop.y, 0.3 * window.height, 10 * dt)
 end
 
 -- check cookie hover
@@ -144,12 +225,12 @@ end
 
 -- mouse pressed check
 function love.mousepressed(mouse_x, mouse_y, button)
-    if button == 1 then
+    if button == 1 and not shop_displayed then
         if mouse_x > cookie.left and mouse_x < cookie.right
             and mouse_y > cookie.top and mouse_y < cookie.bottom then
             print("cookie clicked")
-            totalClicks = totalClicks + 1
-            print(totalClicks)
+            total_clicks = total_clicks + 1
+            print(total_clicks)
             cookie.pressed = true
         end
     end
