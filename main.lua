@@ -1,5 +1,8 @@
 local window = {}
 local cookie = {}
+local show_cookie_shadow = true
+local cookie_shadow_opacity = 0.8
+local base_cookie_shadow_opacity = 0.8
 local bg_image
 local points_font
 local top_ui_box = {}
@@ -59,6 +62,8 @@ function love.load()
     -- update cookies x and y to center it
     cookie.x = (window.width) / 2
     cookie.y = (window.height) / 2
+    cookie.base_y = (window.height) / 2
+    cookie.shadow_y = (window.height) / 2 + 10
     cookie.pressed = false
     cookie.hovered = false
     cookie.base_scale = 0.5
@@ -106,13 +111,14 @@ function love.load()
     shop.height = 0.7 * window.height
 
     -- cards
+    PositionCards()
 end
 
 function love.update(dt)
     if not shop_displayed then
         CheckCookieHovered()
     end
-    -- hovering and clicking to scale logic
+    -- hovering cursor logic
     if not shop_displayed and cookie.hovered then
         love.mouse.setCursor(cookie.cursor_pointer)
 
@@ -123,6 +129,14 @@ function love.update(dt)
 
         cookie.scale_x = Lerp(cookie.scale_x, cookie.base_scale, cookie.hover_scale_speed * dt)
         cookie.scale_y = Lerp(cookie.scale_y, cookie.base_scale, cookie.hover_scale_speed * dt)
+    end
+    -- clicking shadow logic
+    if cookie.pressed then
+        cookie.y = Lerp(cookie.y, cookie.shadow_y, 10 * dt)
+        cookie_shadow_opacity = Lerp(cookie_shadow_opacity, 0, 10 * dt)
+    else
+        cookie.y = Lerp(cookie.y, cookie.base_y, 10 * dt)
+        cookie_shadow_opacity = Lerp(cookie_shadow_opacity, base_cookie_shadow_opacity, 10 * dt)
     end
     -- check points for shop every frame
     CheckCurrentPoints(dt)
@@ -148,7 +162,7 @@ function love.draw()
         points_font:getHeight(total_clicks * mult) / 2
     )
     -- bottom ui box
-    love.graphics.setColor(9 / 255, 36 / 255, 118 / 255, 0.8)
+    love.graphics.setColor(255 / 255, 255 / 255, 255 / 255, 0)
     love.graphics.rectangle("fill", bottom_ui_box.x, bottom_ui_box.y, bottom_ui_box.width, bottom_ui_box.height)
     love.graphics.setColor(1, 1, 1, 1)
     local full_text = total_clicks .. " x " .. mult
@@ -159,6 +173,18 @@ function love.draw()
         0, 1, 1,
         points_font:getWidth(full_text) / 2,
         points_font:getHeight(full_text) / 2
+    )
+    -- cookie shadow
+    love.graphics.setColor(10 / 255, 10 / 255, 10 / 255, cookie_shadow_opacity)
+    love.graphics.draw(
+        cookie.sprite,
+        cookie.x,
+        cookie.y + 10,
+        cookie.rotation,
+        cookie.scale_x,
+        cookie.scale_y,
+        cookie.sprite:getWidth() / 2,
+        cookie.sprite:getHeight() / 2
     )
     -- cookie
     love.graphics.setColor(1, 1, 1, 1)
@@ -183,24 +209,27 @@ function love.draw()
     )
     love.graphics.setColor(1, 1, 1, 1)
     -- add cards to shop
-    for i, random_mult in ipairs(random_mults) do
-        love.graphics.rectangle(
-            "fill",
-            shop.x * 0.2 * i,
-            shop.y,
-            card.width,
-            card.height
-        )
-    end
+    -- for i, random_mult in ipairs(random_mults) do
+    --     love.graphics.rectangle(
+    --         "fill",
+    --         shop.x * 0.2 * i,
+    --         shop.y,
+    --         card.width,
+    --         card.height
+    --     )
+    -- end
 end
 
 function PositionCards()
-    cards[1].x = shop.height
+    cards[1].x = shop.width * 0.3
+    cards[1].x = shop.width * 0.3
+    cards[1].x = shop.width * 0.3
+    cards[1].x = shop.width * 0.3
 end
 
 function CheckCurrentPoints(dt)
     local points = total_clicks * mult
-    if points > 0 and points % 10 == 0 then
+    if points > 0 and points % 100 == 0 then
         DisplayShop(dt)
         shop_displayed = true
     end
