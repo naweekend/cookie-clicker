@@ -45,6 +45,7 @@ local cards = {
 
 }
 local text_scales = {}
+local red_bg_image
 
 function love.load()
     -- window width and height
@@ -122,6 +123,9 @@ function love.load()
     text_scales.increased_points_text_x = 1.5
     text_scales.increased_points_text_y = 1.5
     text_scales.points_text_increased = false
+
+    -- red background
+    red_bg_image = love.graphics.newImage("images/red-background.jpg")
 end
 
 function love.update(dt)
@@ -217,15 +221,18 @@ function love.draw()
         cookie.sprite:getHeight() / 2
     )
     -- shop
-    love.graphics.setColor(9 / 255, 36 / 255, 118 / 255)
-    love.graphics.rectangle(
-        "fill",
-        shop.x,
-        shop.y,
-        shop.width,
-        shop.height
-    )
     love.graphics.setColor(1, 1, 1, 1)
+    -- love.graphics.setColor(9 / 255, 36 / 255, 118 / 255)
+    -- -- love.graphics.rectangle(
+    -- --     "fill",
+    -- --     shop.x,
+    -- --     shop.y,
+    -- --     shop.width,
+    -- --     shop.height
+    -- -- )
+    -- red background
+    love.graphics.draw(red_bg_image, shop.x, shop.y, 0, 0.5, 0.5)
+
     -- add cards to shop
     -- for i, random_mult in ipairs(random_mults) do
     --     love.graphics.rectangle(
@@ -247,7 +254,7 @@ end
 
 function CheckCurrentPoints(dt)
     local points = total_clicks * mult
-    if points > 0 and points % 100 == 0 then
+    if points > 0 and points % 10 == 0 then
         DisplayShop(dt)
         shop_displayed = true
     end
