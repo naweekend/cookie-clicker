@@ -44,6 +44,7 @@ local cards = {
     },
 
 }
+local text_scales = {}
 
 function love.load()
     -- window width and height
@@ -112,6 +113,13 @@ function love.load()
 
     -- cards
     PositionCards()
+
+    -- text opacities
+    text_scales.points_text_x = 1
+    text_scales.points_text_y = 1
+    text_scales.increased_points_text_x = 1.2
+    text_scales.increased_points_text_x = 1.2
+    text_scales.points_text_increased = false
 end
 
 function love.update(dt)
@@ -140,6 +148,12 @@ function love.update(dt)
     end
     -- check points for shop every frame
     CheckCurrentPoints(dt)
+    -- point text scales
+    if text_scales.points_text_increased then
+        text_scales.points_text_x = Lerp(text_scales.points_text_x, text_scales.increased_points_text_x, 10 * dt)
+    else
+        text_scales.points_text_x = Lerp(text_scales.points_text_x, text_scales.increased_points_text_x, 10 * dt)
+    end
 end
 
 function love.draw()
