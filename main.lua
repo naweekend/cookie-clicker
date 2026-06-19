@@ -18,31 +18,30 @@ local cards = {
         mult = math.random(20),
         x = 0,
         y = 0,
-        width = 9 * 15,
+        width = 0,
         height = 16 * 15,
     },
     {
         mult = math.random(20),
         x = 0,
         y = 0,
-        width = 9 * 15,
+        width = 0,
         height = 16 * 15,
     },
     {
         mult = math.random(20),
         x = 0,
         y = 0,
-        width = 9 * 15,
+        width = 0,
         height = 16 * 15,
     },
     {
         mult = math.random(20),
         x = 0,
         y = 0,
-        width = 9 * 15,
+        width = 0,
         height = 16 * 15,
     },
-
 }
 local text_scales = {}
 local red_bg_image
@@ -113,6 +112,9 @@ function love.load()
     shop.height = 0.7 * window.height
 
     -- cards
+    for i, card in ipairs(cards) do
+        card.width = window.width * 0.35
+    end
     PositionCards()
 
     -- text opacities
@@ -162,6 +164,9 @@ function love.update(dt)
         text_scales.points_text_x = Lerp(text_scales.points_text_x, text_scales.base_points_text_x, 100 * dt)
         text_scales.points_text_y = Lerp(text_scales.points_text_y, text_scales.base_points_text_y, 100 * dt)
     end
+
+    -- position cards
+    PositionCards()
 end
 
 function love.draw()
@@ -222,34 +227,25 @@ function love.draw()
     )
     -- shop
     love.graphics.setColor(1, 1, 1, 1)
-    -- love.graphics.setColor(9 / 255, 36 / 255, 118 / 255)
-    -- -- love.graphics.rectangle(
-    -- --     "fill",
-    -- --     shop.x,
-    -- --     shop.y,
-    -- --     shop.width,
-    -- --     shop.height
-    -- -- )
-    -- red background
     love.graphics.draw(red_bg_image, shop.x, shop.y, 0, 0.5, 0.5)
 
     -- add cards to shop
-    -- for i, random_mult in ipairs(random_mults) do
-    --     love.graphics.rectangle(
-    --         "fill",
-    --         shop.x * 0.2 * i,
-    --         shop.y,
-    --         card.width,
-    --         card.height
-    --     )
-    -- end
+    for i, card in ipairs(cards) do
+        love.graphics.rectangle("fill", card.x, card.y, card.width, card.height, 0)
+    end
 end
 
 function PositionCards()
-    cards[1].x = shop.width * 0.3
-    cards[1].x = shop.width * 0.3
-    cards[1].x = shop.width * 0.3
-    cards[1].x = shop.width * 0.3
+    -- x values
+    cards[1].x = shop.width * 0.1
+    cards[2].x = shop.width * 0.55
+    cards[3].x = shop.width * 0.1
+    cards[4].x = shop.width * 0.55
+    -- y values
+    cards[1].y = shop.y + shop.height * 0.05
+    cards[2].y = shop.y + shop.height * 0.55
+    cards[3].y = shop.y + shop.height * 0.55
+    cards[4].y = shop.y + shop.height * 0.05
 end
 
 function CheckCurrentPoints(dt)
