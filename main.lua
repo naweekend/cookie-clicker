@@ -117,8 +117,10 @@ function love.load()
     -- text opacities
     text_scales.points_text_x = 1
     text_scales.points_text_y = 1
-    text_scales.increased_points_text_x = 1.2
-    text_scales.increased_points_text_x = 1.2
+    text_scales.base_points_text_x = 1
+    text_scales.base_points_text_y = 1
+    text_scales.increased_points_text_x = 1.5
+    text_scales.increased_points_text_y = 1.5
     text_scales.points_text_increased = false
 end
 
@@ -150,9 +152,11 @@ function love.update(dt)
     CheckCurrentPoints(dt)
     -- point text scales
     if text_scales.points_text_increased then
-        text_scales.points_text_x = Lerp(text_scales.points_text_x, text_scales.increased_points_text_x, 10 * dt)
+        text_scales.points_text_x = Lerp(text_scales.points_text_x, text_scales.increased_points_text_x, 100 * dt)
+        text_scales.points_text_y = Lerp(text_scales.points_text_y, text_scales.increased_points_text_y, 100 * dt)
     else
-        text_scales.points_text_x = Lerp(text_scales.points_text_x, text_scales.increased_points_text_x, 10 * dt)
+        text_scales.points_text_x = Lerp(text_scales.points_text_x, text_scales.base_points_text_x, 100 * dt)
+        text_scales.points_text_y = Lerp(text_scales.points_text_y, text_scales.base_points_text_y, 100 * dt)
     end
 end
 
@@ -171,7 +175,7 @@ function love.draw()
         total_clicks * mult,
         points_text.x,
         points_text.y,
-        0, 1, 1,
+        0, text_scales.points_text_x, text_scales.points_text_y,
         points_font:getWidth(total_clicks * mult) / 2,
         points_font:getHeight(total_clicks * mult) / 2
     )
@@ -275,6 +279,7 @@ function love.mousepressed(mouse_x, mouse_y, button)
             total_clicks = total_clicks + 1
             print(total_clicks)
             cookie.pressed = true
+            text_scales.points_text_increased = true
         end
     end
 end
@@ -285,6 +290,7 @@ function love.mousereleased(mouse_x, mouse_y, button)
         if cookie.pressed then
             print("cookie released")
             cookie.pressed = false
+            text_scales.points_text_increased = false
         end
     end
 end
