@@ -67,7 +67,7 @@ local fireworks                  = {}
 local floaters                   = {}
 
 -- ── Milestones ────────────────────────────────────────────
-local milestones                 = { 500, 1000, 2500, 5000, 10000 }
+local milestones                 = { 500, 1000, 2500, 5000, 10000, 50000, 100000, 1000000, 5000000, 10000000 }
 local next_milestone_idx         = 1
 
 -- ═══════════════════════════════════════════════════════════
@@ -410,7 +410,7 @@ function UpdateCardAnim(dt)
       mult = mult + card.mult
       if mult < 1 then mult = 1 end
       local is_pos = card.mult >= 0
-      SpawnFloater((is_pos and "+" or "") .. card.mult .. " MULT", cx, cy - 90, is_pos)
+      SpawnFloater((is_pos and "+" or "") .. card.mult, cx, cy - 90, is_pos)
       SpawnSparkle(cx, cy, is_pos and 40 or 30)
       if is_pos then
         PlaySfx(sounds.card_ding) -- "ding / power-up"
@@ -463,7 +463,7 @@ function love.draw()
   -- bobbing mult bar (bottom)
   love.graphics.setFont(points_font)
   love.graphics.setColor(1, 1, 1, 1)
-  local full = total_clicks .. " x " .. mult .. " MULT"
+  local full = total_clicks .. " x " .. mult
   local bob  = mult_text.y + math.sin(global_timer * 2.5) * 4
   love.graphics.print(full, mult_text.x, bob, 0, 1, 1,
     points_font:getWidth(full) / 2, points_font:getHeight() / 2)
