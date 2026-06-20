@@ -223,23 +223,23 @@ function love.load()
   UpdateCookieBox() -- ← initialise box BEFORE first update
 
   -- images
-  bg_image     = love.graphics.newImage("images/background.jpg")
-  red_bg_image = love.graphics.newImage("images/red-background.jpg")
-  card_image   = love.graphics.newImage("images/card.png")
+  bg_image      = love.graphics.newImage("images/background.jpg")
+  red_bg_image  = love.graphics.newImage("images/red-background.jpg")
+  card_image    = love.graphics.newImage("images/card.png")
 
   -- fonts
-  points_font  = love.graphics.newFont("fonts/mightysouly.ttf", 80)
-  small_font   = love.graphics.newFont("fonts/mightysouly.ttf", 46)
-  tiny_font    = love.graphics.newFont("fonts/mightysouly.ttf", 28)
+  points_font   = love.graphics.newFont("fonts/mightysouly.ttf", 80)
+  small_font    = love.graphics.newFont("fonts/mightysouly.ttf", 46)
+  tiny_font     = love.graphics.newFont("fonts/mightysouly.ttf", 28)
 
   -- sounds ────────────────────────────────────────────
   -- "static" sources are short one-shots (safe to :clone() and
   -- overlap). "stream" is used for the long background loop.
-  sounds       = {
-    bg_music    = love.audio.newSource("sounds/ambient_loop.mp3", "stream"),
+  sounds        = {
+    -- bg_music    = love.audio.newSource("sounds/oop.mp3", "stream"),
     click       = love.audio.newSource("sounds/cookie_click.mp3", "static"),
-    release     = love.audio.newSource("sounds/cookie_release.mp3", "static"),
-    cards_ready = love.audio.newSource("sounds/cards_ready.mp3", "static"),
+    -- release     = love.audio.newSource("sounds/cookie_release.mp3", "static"),
+    -- cards_ready = love.audio.newSource("sounds/cards_ready.mp3", "static"),
     shop_open   = love.audio.newSource("sounds/shop_open.mp3", "static"),
     card_pick   = love.audio.newSource("sounds/card_pick.mp3", "static"),
     card_whoosh = love.audio.newSource("sounds/card_whoosh.mp3", "static"),
@@ -247,13 +247,10 @@ function love.load()
     card_thud   = love.audio.newSource("sounds/card_thud.mp3", "static"),
     card_swoosh = love.audio.newSource("sounds/card_swoosh.mp3", "static"),
     card_merge  = love.audio.newSource("sounds/card_merge.mp3", "static"),
-    ready_tick  = love.audio.newSource("sounds/ready_tick.mp3", "static"),
+    -- ready_tick  = love.audio.newSource("sounds/ready_tick.mp3", "static"),
     firework    = love.audio.newSource("sounds/firework.mp3", "static"),
     milestone   = love.audio.newSource("sounds/milestone.mp3", "static"),
   }
-  sounds.bg_music:setLooping(true)
-  sounds.bg_music:setVolume(0.4)
-  sounds.bg_music:play()
 
   -- UI
   top_ui_box    = { x = 0, y = 30, width = window.width, height = 90 }
@@ -330,7 +327,6 @@ function love.update(dt)
     shop_wait_timer = shop_wait_timer + dt
     if shop_wait_timer >= 1.0 then
       can_click_card = true
-      PlaySfx(sounds.cards_ready) -- "cards ready / shimmer chime"
     end
   end
 
@@ -450,7 +446,6 @@ function UpdateCardAnim(dt)
       sel = nil; anim_state = "idle"; anim_t = 0
       shop_displayed = false
       InitCards(); PositionCards()
-      PlaySfx(sounds.ready_tick) -- quiet "ready tick"
     end
   end
 end
@@ -742,6 +737,5 @@ function love.mousereleased(mx, my, button)
   if button == 1 and cookie.pressed then
     cookie.pressed = false
     ts.pumped      = false
-    PlaySfx(sounds.release) -- "cookie release / soft pop"
   end
 end
