@@ -22,7 +22,7 @@ local total_clicks               = 0 -- raw clicks (shown in bottom bar)
 
 -- ── Shop (time-based) ─────────────────────────────────────
 local shop_timer                 = 0
-local next_shop_time             = math.random(40, 80) -- first shop in 40-80 s
+local next_shop_time             = math.random(20, 40) -- first shop in 40-80 s
 local shop_visit_count           = 0
 local card_mult_factor           = 1
 
@@ -679,7 +679,7 @@ function OpenShop()
 
   -- reset timer; next shop in another 40-80 s
   shop_timer       = 0
-  next_shop_time   = math.random(40, 80)
+  next_shop_time   = math.random(20, 40)
 
   -- scale up card mult range with visits
   card_mult_factor = card_mult_factor + math.random(1, 3)
